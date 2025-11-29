@@ -124,6 +124,7 @@ Build for production:
 npm run build
 ```
 
+```
 Deploy static frontend to Vercel / Netlify, or host with any static host. If you use a serverless backend (for AI proxy), deploy that to Vercel serverless functions, AWS Lambda, Cloud Run, etc.
 
 ---

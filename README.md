@@ -2,13 +2,13 @@
 
 ```
 # AI‑Phishing‑Link‑Analyzer 🚨
-
+```
 A lightweight web app that analyzes suspicious URLs using AI (Google Gemini or any LLM API) plus custom cybersecurity heuristics to provide instant risk assessment with clear, actionable guidance.
 
 🔗 **Live demo:** https://ai-phishing-link-analyzer.vercel.app
 
 ---
-
+```
 ## 📌 Table of contents
 
 - [About](#about)  
@@ -31,7 +31,7 @@ A lightweight web app that analyzes suspicious URLs using AI (Google Gemini or a
 - [Acknowledgements](#acknowledgements)
 
 ---
-
+```
 ## 🧩 About
 
 AI‑Phishing‑Link‑Analyzer helps users quickly evaluate whether a URL is **safe**, **suspicious**, or **malicious** by combining:

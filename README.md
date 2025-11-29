@@ -37,7 +37,7 @@ A web‑based tool that analyzes suspicious URLs in real time using AI (via Goog
 
 ## Demo / Live Link
 
-[ai-phishing-link-analyzer.vercel.app](https://ai-phishing-link-analyzer.vercel.app) 
+https://ai-phishing-link-analyzer.vercel.app 
 
 ---
 

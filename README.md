@@ -1,133 +1,225 @@
-Cool — I can help you build an “end‑to‑end README.md” template for your AI-Phishing-Link-Analyzer based on what I see in the repo. You can copy this into your README (or refine further).
-
-````markdown
+```markdown
 # AI‑Phishing‑Link‑Analyzer 🚨
 
-A web‑based tool that analyzes suspicious URLs in real time using AI (via Google’s Gemini API) and cybersecurity logic. Users can input any link and instantly receive a risk assessment (Safe, Suspicious, Malicious, Unknown) along with detailed reasoning and recommendations. :contentReference[oaicite:1]{index=1}
+A lightweight web app that analyzes suspicious URLs using AI (Google Gemini or compatible LLM) plus custom cybersecurity heuristics to provide an on‑the‑spot risk assessment and actionable guidance.
+
+Live demo: https://ai-phishing-link-analyzer.vercel.app
 
 ---
 
-## 🔧 Table of Contents
+## Table of contents
 
+- [About](#about)  
 - [Features](#features)  
-- [Demo / Live Link](#demo--live-link)  
-- [Tech Stack](#tech-stack)  
-- [Getting Started](#getting-started)  
+- [Tech stack](#tech-stack)  
+- [Architecture overview](#architecture-overview)  
+- [Getting started](#getting-started)  
   - [Prerequisites](#prerequisites)  
-  - [Installation](#installation)  
-  - [Configuration](#configuration)  
-  - [Running Locally](#running-locally)  
+  - [Install](#install)  
+  - [Configuration (.env)](#configuration-env)  
+  - [Run locally](#run-locally)  
+  - [Build & deploy](#build--deploy)  
 - [Usage](#usage)  
-- [How It Works](#how-it-works)  
-- [Security & Privacy Considerations](#security--privacy-considerations)  
+- [How the analysis works](#how-the-analysis-works)  
+- [Security & privacy considerations](#security--privacy-considerations)  
+- [Testing & CI](#testing--ci)  
+- [Troubleshooting](#troubleshooting)  
 - [Contributing](#contributing)  
 - [License](#license)  
-- [Credits & Acknowledgements](#credits--acknowledgements)  
+- [Acknowledgements](#acknowledgements)
 
 ---
 
-## 🌟 Features
+## About
 
-- Real‑time URL analysis using AI + custom cybersecurity heuristics  
-- Risk assessment categories: **Safe / Suspicious / Malicious / Unknown** :contentReference[oaicite:2]{index=2}  
-- Detailed reasoning and recommendations to users  
-- Simple web UI — paste or type a URL, get instant evaluation  
+This project helps users quickly evaluate whether a URL looks safe, suspicious, or malicious by combining an LLM-based analysis (for natural-language explanation and heuristics interpretation) with deterministic checks (blocklists, known bad patterns, and simple technical tests such as domain similarity and punycode detection).
 
----
-
-## Demo / Live Link
-
-https://ai-phishing-link-analyzer.vercel.app 
+It is intended for educational and research purposes — not a replacement for professional cybersecurity tooling.
 
 ---
 
-## Tech Stack
+## Features
 
-- Frontend: HTML, CSS, JavaScript (React + Vite) :contentReference[oaicite:4]{index=4}  
-- Backend / AI integration: Google Gemini API (or similar) + custom logic  
-- Project config: `package.json`, Vite config, linting via ESLint :contentReference[oaicite:5]{index=5}  
+- Single-click URL analysis with an AI-powered reasoning summary.  
+- Final classification: Safe / Suspicious / Malicious / Unknown.  
+- Heuristic checks: domain age (if available), IP vs domain, punycode/homograph detection, excessive subdomains, suspicious TLDs, presence of URL shorteners, common phishing keywords.  
+- Optionally cross-check against blocklists / local allowlist.  
+- Simple, responsive UI (React + Vite) and a pluggable AI backend layer.
 
 ---
 
-## Getting Started
+## Tech stack
+
+- Frontend: React + Vite, Tailwind/CSS (or plain CSS depending on repo)  
+- Backend (optional): Node.js / Express or serverless functions to proxy AI requests securely  
+- AI: Google Gemini API or other LLM provider (OpenAI-compatible providers can be used)  
+- CI/CD: GitHub Actions (recommended), deploy to Vercel / Netlify
+
+---
+
+## Architecture overview
+
+1. Frontend accepts a URL from the user.  
+2. Local deterministic checks run in the client or a backend: regex checks, punycode detection, domain heuristics, optional blocklist lookup.  
+3. A structured prompt and the URL are sent to the LLM for a reasoning-based assessment.  
+4. The app aggregates LLM output with heuristics to produce the final verdict and a human-readable explanation.  
+5. Optionally log anonymized results (consent required) for analytics or model tuning.
+
+---
+
+## Getting started
 
 ### Prerequisites
 
-- Node.js (v14 or above recommended)  
+- Node.js v14+ (v18 recommended)  
 - npm or yarn  
-- Access / API key for Google Gemini API (or whichever AI service is used)  
+- An API key for your selected LLM provider (e.g. Google Gemini, OpenAI, or other). For production, store keys securely in environment variables.
 
-### Installation
+### Install
+
+Clone the repo and install dependencies:
 
 ```bash
 git clone https://github.com/Rakesh3697/AI-Phishing-Link-Analyzer.git
 cd AI-Phishing-Link-Analyzer
 npm install
-````
-
-### Configuration
-
-* Create a `.env` file in the root directory (or use the provided `.env` template)
-* Add the needed environment variables, e.g.:
-
-```
-GEMINI_API_KEY=your_api_key_here
+# or
+# yarn
 ```
 
-(Adjust according to your integration setup.)
+### Configuration (.env)
 
-### Running Locally
+Create a `.env` in the project root (this file must NOT be committed). Example:
+
+```
+# Example .env
+VITE_APP_API_BASE_URL=https://your-backend.example.com   # optional if you use a backend
+GEMINI_API_KEY=your_gemini_api_key_here                  # or PROVIDER_API_KEY depending on integration
+NODE_ENV=development
+PORT=3000
+# Optional: if you use serverless functions or a proxy, include their keys/config
+```
+
+Notes:
+- If the app calls the AI directly from the browser (not recommended for production), ensure keys are restricted and usage is rate-limited. Prefer a backend proxy for API key safety.
+- If you have different providers, map variables accordingly (e.g., OPENAI_API_KEY).
+
+### Run locally
+
+Start the dev server:
 
 ```bash
 npm run dev
+# or
+# yarn dev
 ```
 
-This should start the development server (Vite) and you can open `http://localhost:3000` (or whichever port) to test the tool locally.
+Open http://localhost:3000 (or the port shown in terminal).
+
+### Build & deploy
+
+Build for production:
+
+```bash
+npm run build
+```
+
+Deploy static frontend to Vercel / Netlify, or host with any static host. If you use a serverless backend (for AI proxy), deploy that to Vercel serverless functions, AWS Lambda, Cloud Run, etc.
 
 ---
 
 ## Usage
 
-1. Open the web app.
-2. Paste or type the URL you want to analyze.
-3. Click “Analyze” (or the equivalent button).
-4. View the AI-powered risk assessment along with reasoning and recommendations.
+1. Open the web app.  
+2. Paste or type a suspicious URL into the input field.  
+3. Click "Analyze".  
+4. Review the verdict and the AI-generated explanation. The response will include recommended actions (e.g., "Do not click", "Open in an isolated VM", "Check domain registrar").  
 
-Use this for testing suspicious or unknown links — but when in doubt, always check manually / through trusted tools.
+Example output structure (internal representation):
+
+```json
+{
+  "url": "http://example.com/verify",
+  "classification": "Suspicious",
+  "confidence": 0.78,
+  "reasons": [
+    "Shortened URL detected",
+    "Suspicious token in path",
+    "Domain uses recently registered TLD"
+  ],
+  "suggestedAction": "Do not submit credentials; verify via official site"
+}
+```
 
 ---
 
-## 🧠 How It Works
+## How the analysis works
 
-1. The frontend collects user‑input URL.
-2. The backend (or client-side logic) sends the URL to the AI API (e.g. Google Gemini) along with some instructions/prompts.
-3. The AI analyzes patterns (URL structure, domain, metadata, history) and returns a judgment (Safe / Suspicious / Malicious / Unknown) plus reasoning.
-4. Additional custom cybersecurity logic (heuristics, blocklists, heuristics) runs to cross-check or enhance the AI output.
-5. Final result is displayed to the user, along with any suggestions (e.g. “Do not proceed”, “Use caution”, etc.).
+- Prompt engineering: the app crafts a structured prompt to the LLM describing required checks, expected JSON schema, and examples. This reduces hallucinations and produces consistent outputs.  
+- Deterministic heuristics: regex, domain checks, punycode/homograph detection, blocklist lookups.  
+- Aggregation: heuristics can up- or down-weight the model's assessment; the app returns both the model's reasoning and the final aggregated verdict.
 
-*Note: If you’ve implemented dataset-based checks, blacklist/whitelist, or other ML/heuristic modules — describe them here.*
+If you want to inspect or improve prompts, check the code module that builds LLM prompts (e.g. src/utils/promptBuilder.*).
 
 ---
 
-## Security & Privacy Considerations
+## Security & privacy considerations
 
-* **Do not** send sensitive personal URLs through third‑party AI services if they contain private data.
-* Store API keys securely (e.g. `.env`, environment variables) — do **not** commit them to the repo.
-* Handle malicious links carefully — do **not** automatically open them or perform unsafe network requests.
-* Provide a disclaimer: This tool is for **educational purposes only** — results may not be 100% accurate.
+- Never commit API keys or `.env` files. Add `.env` to `.gitignore`.  
+- Avoid sending highly-sensitive or private URLs to third-party APIs. Redact tokens or personal identifiers if necessary.  
+- Treat AI output as advisory — LLMs can be wrong or hallucinate. Use deterministic checks to reduce false positives/negatives.  
+- When analyzing potentially malicious URLs, do not open them in your environment. Use isolated sandboxes for deeper analysis.  
+- Consider adding telemetry opt-in and data minimization for production.
+
+---
+
+## Testing & CI
+
+- Add unit tests for heuristic functions (jest / vitest recommended) and integration tests for the prompt-to-response flow.  
+- Configure GitHub Actions to run linting, unit tests, and build on PRs. Example job steps: install, test, build, lint.
+
+---
+
+## Troubleshooting
+
+- "AI requests failing": Verify API key, check provider rate limits, and confirm the endpoint URL in .env.  
+- "UI not loading / port conflicts": Ensure PORT is free and correct in env. Try removing Vite cache: rm -rf node_modules/.vite && npm run dev.  
+- "Inconsistent model output": Add stricter JSON schema enforcement in prompts and implement a fallback parser.
 
 ---
 
 ## Contributing
 
-Contributions, issues and feature requests are welcome!
+Contributions are welcome!
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature-name`)
-3. Commit your changes (`git commit -m 'Add some feature'`)
-4. Push to the branch (`git push origin feature-name`)
-5. Create a new Pull Request
+1. Fork the repository.  
+2. Create a branch: git checkout -b feature/my-feature  
+3. Make changes and add tests.  
+4. Commit: git commit -m "Add <feature>"  
+5. Push: git push origin feature/my-feature  
+6. Open a Pull Request describing your changes.
 
-
+Please follow conventional commits if possible and add unit tests for new logic.
 
 ---
+
+## License
+
+MIT License — see LICENSE file for details.
+
+---
+
+## Acknowledgements
+
+- Inspiration: multiple public phishing detection tools and prompt engineering best practices.  
+- LLM provider documentation (Google Gemini / OpenAI).
+
+---
+
+## Next steps you might want
+
+- Add screenshots or an animated GIF to the README (place images in /assets and reference them).  
+- Add an example prompt file and JSON schema for the LLM response.  
+- Add a GitHub Actions CI workflow to run tests and build on PRs.
+
+```
